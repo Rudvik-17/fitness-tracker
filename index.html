@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rudvik — Fitness OS 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c26;--surface3:#252533;
+  --accent:#4ade80;--accent2:#22d3ee;--accent3:#f59e0b;--danger:#f87171;
+  --text:#e8e8f0;--text2:#9090a8;--text3:#5a5a72;
+  --border:#2a2a3a;--radius:10px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh}
+.app{max-width:800px;margin:0 auto;padding:1.25rem}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px}
+.hdr-left h1{font-size:22px;font-weight:700;letter-spacing:-0.5px}
+.hdr-left p{font-size:12px;color:var(--text2);margin-top:3px;font-family:'JetBrains Mono',monospace}
+.weight-pills{display:flex;gap:8px;flex-wrap:wrap}
+.wpill{padding:5px 12px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono',monospace;border:1px solid var(--border)}
+.wpill.start{background:#1a1a2e;color:var(--text2)}
+.wpill.goal{background:#0d2318;color:var(--accent)}
+.wpill.cur{background:#1a2012;color:var(--accent);border-color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-family:'JetBrains Mono',monospace}
+.stat-val{font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.stat-sub{font-size:11px;margin-top:3px}
+.prog-wrap{margin-bottom:1.5rem}
+.prog-info{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+.prog-track{height:10px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width 0.5s}
+.prog-milestones{display:flex;justify-content:space-between;margin-top:6px}
+.milestone{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.view-tabs{display:flex;gap:6px;margin-bottom:1.25rem;background:var(--surface);border-radius:var(--radius);padding:4px;flex-wrap:wrap}
+.vtab{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border:1px solid transparent;background:none;font-family:'Syne',sans-serif;transition:all 0.15s}
+.vtab:hover{color:var(--text);background:var(--surface2)}
+.vtab.active{background:var(--surface3);color:var(--text);border-color:var(--border)}
+.level-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:1.5rem}
+.level-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.level-name{font-size:14px;font-weight:700;color:var(--accent3)}
+.level-next{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.level-track{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.level-fill{height:100%;background:linear-gradient(90deg,var(--accent3),#ef4444);border-radius:99px;transition:width 0.4s}
+.xp-milestones{display:flex;justify-content:space-between;margin-top:6px;flex-wrap:wrap;gap:4px}
+.xp-m{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.day-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem}
+.day-panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.day-panel-title{font-size:15px;font-weight:700}
+.day-xp-badge{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--accent3);background:#1f1a0d;border:1px solid #3a2e0d;padding:4px 10px;border-radius:6px}
+.task-section{margin-bottom:1rem}
+.tsec-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent;margin-bottom:4px;background:var(--surface2);transition:all 0.12s;user-select:none}
+.task-item:hover{border-color:var(--border);background:var(--surface3)}
+.task-item.done{background:#0b1f0f;border-color:#1a3a1a}
+.chk{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.task-item.done .chk{background:var(--accent);border-color:var(--accent)}
+.chk-mark{display:none}
+.task-item.done .chk-mark{display:block}
+.task-body{flex:1;min-width:0}
+.task-name{font-size:13px;line-height:1.4}
+.task-item.done .task-name{color:var(--accent);text-decoration:line-through;text-decoration-color:#2a6a3a}
+.task-hint{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4}
+.task-item.done .task-hint{color:#2a6a3a}
+.task-pts{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--accent3);flex-shrink:0;margin-top:2px}
+.avoid-box{background:#1f0d0d;border:1px solid #3a1a1a;border-radius:8px;padding:10px 12px;margin-bottom:1rem}
+.avoid-title{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--danger);margin-bottom:7px;font-family:'JetBrains Mono',monospace}
+.avoid-item{font-size:12px;color:#c87070;padding:2px 0;display:flex;gap:7px}
+.tip-box{background:#0d1a2e;border:1px solid #1a3050;border-radius:8px;padding:10px 12px;font-size:12px;color:#7aaddd;line-height:1.6}
+.cal-nav{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.cal-nav-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text2);padding:6px 14px;cursor:pointer;font-family:'Syne',sans-serif;font-size:13px}
+.cal-nav-btn:hover{background:var(--surface2);color:var(--text)}
+.cal-month-label{font-size:16px;font-weight:700;flex:1}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:1rem}
+.cal-dow{font-size:10px;color:var(--text3);text-align:center;padding:4px 0;font-family:'JetBrains Mono',monospace}
+.cal-day{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-family:'JetBrains Mono',monospace;cursor:pointer;border:1px solid transparent;position:relative;transition:all 0.1s;user-select:none}
+.cal-day.empty{background:transparent;cursor:default;pointer-events:none}
+.cal-day.out-of-range{opacity:0.2;cursor:default;pointer-events:none;background:var(--surface)}
+.cal-day.future{background:var(--surface);color:var(--text2);border-color:var(--border)}
+.cal-day.future:hover{border-color:var(--accent2)}
+.cal-day.inactive{background:var(--surface);color:var(--text3)}
+.cal-day.partial{background:#1a2e1a;color:var(--accent);border-color:#2a4a2a}
+.cal-day.complete{background:#0d2318;color:var(--accent);border-color:var(--accent)}
+.cal-day.complete::after{content:'';position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.cal-day.today{border-color:var(--accent2)!important;box-shadow:0 0 0 1px var(--accent2)}
+.cal-day.selected{border-color:var(--accent3)!important;box-shadow:0 0 0 1px var(--accent3)}
+.cal-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:1.5rem}
+.cal-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3)}
+.cal-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.heatmap-wrap{margin-bottom:1.5rem}
+.heatmap-month{margin-bottom:1rem}
+.hm-month-label{font-size:12px;color:var(--text2);margin-bottom:6px;font-family:'JetBrains Mono',monospace}
+.hm-row{display:flex;gap:3px;flex-wrap:wrap}
+.hm-cell{width:14px;height:14px;border-radius:2px;flex-shrink:0;cursor:pointer}
+.hm-0{background:var(--surface2)}.hm-1{background:#0d2318}.hm-2{background:#1a4a28}.hm-3{background:#2a7a3a}.hm-4{background:var(--accent)}
+.hm-legend{display:flex;align-items:center;gap:6px;margin-top:8px}
+.hm-legend span{font-size:11px;color:var(--text3)}
+.streak-section{margin-bottom:1.5rem}
+.streak-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+.streak-row{display:flex;gap:4px;flex-wrap:wrap}
+.sdot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'JetBrains Mono',monospace;border:1px solid var(--border);color:var(--text3);background:var(--surface)}
+.sdot.lit{background:#0d2318;border-color:var(--accent);color:var(--accent)}
+.sdot.today-dot{border:2px solid var(--accent2);color:var(--accent2)}
+.weight-log{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:1.5rem}
+.wl-title{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:10px}
+.wl-input-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.wl-input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:13px;width:120px;outline:none}
+.wl-input:focus{border-color:var(--accent2)}
+.wl-btn{background:var(--surface3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 16px;cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;transition:all 0.15s}
+.wl-btn:hover{border-color:var(--accent);color:var(--accent)}
+.wl-entries{max-height:160px;overflow-y:auto;margin-top:8px}
+.wl-entry{display:flex;justify-content:space-between;font-size:12px;font-family:'JetBrains Mono',monospace;padding:5px 0;border-bottom:1px solid var(--border);color:var(--text2)}
+.wl-entry:last-child{border-bottom:none}
+.wl-loss{color:var(--accent)}.wl-gain{color:var(--danger)}
+@media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr)}.cal-day{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-left">
+      <h1>Rudvik — Fitness OS</h1>
+      <p>Mar 15, 2026 → Dec 31, 2026 · 291 days · Sapthagiri Hostel</p>
+    </div>
+    <div class="weight-pills">
+      <div class="wpill start">Start: 125 kg</div>
+      <div class="wpill goal">Goal: 90 kg</div>
+      <div class="wpill cur" id="cur-pill">Now: 125 kg</div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Total XP</div><div class="stat-val" id="s-xp" style="color:var(--accent3)">0</div><div class="stat-sub" id="s-level" style="color:var(--accent3)">Rookie</div></div>
+    <div class="stat"><div class="stat-label">Days Done</div><div class="stat-val" id="s-days">0</div><div class="stat-sub" style="color:var(--text3)">of 291</div></div>
+    <div class="stat"><div class="stat-label">🔥 Streak</div><div class="stat-val" id="s-streak">0</div><div class="stat-sub" style="color:var(--text3)">consecutive</div></div>
+    <div class="stat"><div class="stat-label">Lost</div><div class="stat-val" id="s-lost" style="color:var(--accent)">0 kg</div><div class="stat-sub" id="s-rem" style="color:var(--text3)">35 kg to go</div></div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-info"><span>Weight journey: 125 → 90 kg</span><span id="prog-pct">0%</span></div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-milestones">
+      <span class="milestone">125</span><span class="milestone">120</span><span class="milestone">115</span>
+      <span class="milestone">110</span><span class="milestone">105</span><span class="milestone">100</span>
+      <span class="milestone">95</span><span class="milestone" style="color:var(--accent)">90✓</span>
+    </div>
+  </div>
+  <div class="level-section">
+    <div class="level-header">
+      <div class="level-name" id="lv-name">🌱 Rookie</div>
+      <div class="level-next" id="lv-next">200 XP to Cadet</div>
+    </div>
+    <div class="level-track"><div class="level-fill" id="lv-fill" style="width:0%"></div></div>
+    <div class="xp-milestones">
+      <span class="xp-m">0</span><span class="xp-m">200 Cadet</span><span class="xp-m">500 Warrior</span>
+      <span class="xp-m">1000 Ranger</span><span class="xp-m">2000 Elite</span><span class="xp-m">4000 Legend</span>
+    </div>
+  </div>
+  <div class="view-tabs">
+    <button class="vtab active" onclick="setView('today')">Today</button>
+    <button class="vtab" onclick="setView('calendar')">Calendar</button>
+    <button class="vtab" onclick="setView('heatmap')">Heatmap</button>
+    <button class="vtab" onclick="setView('weight')">Weight Log</button>
+  </div>
+  <div id="view-today"></div>
+  <div id="view-calendar" style="display:none"></div>
+  <div id="view-heatmap" style="display:none"></div>
+  <div id="view-weight" style="display:none"></div>
+</div>
+<script>
+const START=new Date(2026,2,15),END=new Date(2026,11,31);
+const WK=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MENU={
+  Monday:{b:{eat:'Idli (2 pcs) + Sambar + Chutney',skip:'Vada — deep fried every time'},l:{eat:'Chapathi (1) + Dal Palak + Beetroot Palya',skip:'White Rice, Pappad'},s:{eat:'Tea/Coffee (no sugar) + Cucumber sticks',skip:'Muffin / Fruit Cake — high sugar'},d:{eat:'Chapathi (1) + Drumstick Sambar + Aloo Gobi',skip:'White Rice, Pickle'}},
+  Tuesday:{b:{eat:'Bisi Bele Bath (small bowl) + Chutney',skip:'Semiya Bath (sweet), Kara Boondhi (fried)'},l:{eat:'Chapathi (1) + Aloo Mattar Gravy + Raita',skip:'Veg Biryani — oily rice'},s:{eat:'Tea (no sugar) + Oats (self-prepared, water)',skip:'Cookies / Goodday biscuits'},d:{eat:'Chapathi (1) + Aloo Soya Masala + Boiled Egg',skip:'White Rice, Coconut Milk Egg Gravy'}},
+  Wednesday:{b:{eat:'Dosa (2 pcs) + Sambar + Chutney',skip:'3rd dosa'},l:{eat:'Chapathi (1) + Soppu Sambar + Veg Sagoo',skip:'White Rice, excess Butter Milk'},s:{eat:'Tea + Pav Bajji (pav only, no butter) + Carrot sticks',skip:'Vada Pav — butter heavy'},d:{eat:'Chapathi (1) + Palak Paneer + Veg Pulav (small scoop)',skip:'Kadai Chicken gravy (high oil), excess Banana'}},
+  Thursday:{b:{eat:'Idiyappam (2 pcs) + Veg Kurma',skip:'Kesari Bath (sugar+ghee), Poori (fried)'},l:{eat:'Chapathi (1) + White Pumpkin Sambar + Long Beans Poriyal',skip:'White Rice, Butter Milk'},s:{eat:'Tea + Bread (1 slice) + Cucumber or Carrot',skip:'Pasanda / Chilli Bajji — deep fried'},d:{eat:'Chapathi (1) + Dal Makani + Vangi Bath (small)',skip:'Excess Chutney, second helpings'}},
+  Friday:{b:{eat:'Idli (2 pcs) + Sambar + Chutney',skip:'Vada (fried), 3rd Idli'},l:{eat:'Chapathi (1) + Tomato Pappu + Aloo Masala Palya',skip:'White Rice, Butter Milk'},s:{eat:'Tea + Namkeen (tiny handful) + Carrot sticks',skip:'Kadle Puri — deep fried puri'},d:{eat:'Chapathi (1) + Soorakai Kootu + Rasam + Boiled Egg',skip:'White Rice, Veg Kabab (fried), Payasam'}},
+  Saturday:{b:{eat:'Bensi Rawa Upma (small) + Chutney',skip:'Puliyogare — tamarind rice, high cal'},l:{eat:'Chapathi (1) + Sabzi',skip:'Veg Fried Rice + Manchurian Gravy — skip both'},s:{eat:'Tea + Onion Pakoda (max 2 pcs) + Oats after',skip:'More than 2 pakodas'},d:{eat:'Chapathi (1) + Veg Chettinad + Rasam',skip:'White Rice, excess Pickle'}},
+  Sunday:{b:{eat:'Idiyappam (2 pcs) + Sagoo + Chutney',skip:'Poori (fried), Sweet Pongal (sugar+ghee)'},l:{eat:'Chapathi (1) + Vegetable Kurma',skip:'Ghee Rice — skip on weight loss days'},s:{eat:'Tea + Veg Sandwich — best snack of the week!',skip:'Nothing to skip today'},d:{eat:'Chapathi (1) + Veg Hyderabadi Gravy + Rasam',skip:'White Rice, Payasam (dessert)'}}
+};
+const TIPS=['Eat slowly — 20 min for brain to register fullness. Put spoon down between bites.','Fill half your plate with sabzi/sambar before rice or chapathi.','Never skip breakfast — sets metabolism for the day.','Walk 10 min after dinner. Burns ~50 kcal and aids digestion.','Weigh yourself every Sunday morning before eating.','Carry a water bottle everywhere. Thirst often feels like hunger.','Sleep 7-8 hours. Poor sleep spikes hunger hormones by 25%.','On rest days, do 20 min stretching or yoga instead.','Increase run by 5 min every week. Consistency beats intensity.','Mess dal and sambar are your best friends — high protein, low fat.'];
+const LEVELS=[{name:'🌱 Rookie',min:0,next:200},{name:'⚡ Cadet',min:200,next:500},{name:'🔥 Warrior',min:500,next:1000},{name:'🏃 Ranger',min:1000,next:2000},{name:'💪 Elite',min:2000,next:4000},{name:'🏆 Legend',min:4000,next:Infinity}];
+function getLevel(xp){let lv=LEVELS[0];for(const l of LEVELS){if(xp>=l.min)lv=l;}return lv;}
+function dKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function kToD(k){const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)}
+function inR(d){const x=new Date(d);x.setHours(0,0,0,0);const s=new Date(START);s.setHours(0,0,0,0);const e=new Date(END);e.setHours(0,0,0,0);return x>=s&&x<=e}
+function isToday(d){const t=new Date();return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate()}
+function dayName(d){return WK[d.getDay()]}
+function getTasks(dn){
+  const m=MENU[dn];
+  return[
+    {id:'run',name:'Morning run (20–30 min)',hint:'Burn ~250–300 kcal. Add 5 min each week.',xp:40,sec:'exercise'},
+    {id:'water',name:'Drink 3+ litres of water',hint:'Suppresses appetite, boosts metabolism.',xp:15,sec:'exercise'},
+    {id:'nosugar',name:'Tea/Coffee without sugar (both times)',hint:'Saves 100+ kcal/day — 3 kg in 3 months.',xp:10,sec:'exercise'},
+    {id:'bfast',name:'Breakfast: '+m.b.eat,hint:'Avoid: '+m.b.skip,xp:20,sec:'meals'},
+    {id:'lunch',name:'Lunch: '+m.l.eat,hint:'Avoid: '+m.l.skip,xp:20,sec:'meals'},
+    {id:'snack',name:'Snack: '+m.s.eat,hint:'Avoid: '+m.s.skip,xp:15,sec:'meals'},
+    {id:'dinner',name:'Dinner: '+m.d.eat,hint:'Avoid: '+m.d.skip,xp:20,sec:'meals'},
+    {id:'oats',name:'Prepare oats (water, no sugar)',hint:'Keep packet in room. Best post-run meal.',xp:10,sec:'extras'},
+    {id:'veggies',name:'Eat cucumber or carrot today',hint:'Eat before dinner — blunts hunger spikes.',xp:10,sec:'extras'},
+    {id:'nosh',name:'No second helpings of rice or fried food',hint:'One plate, done. Biggest weight-loss rule.',xp:20,sec:'extras'},
+  ];
+}
+let state;
+try{state=JSON.parse(localStorage.getItem('rudvik_fit_v4'))||null;}catch(e){state=null;}
+if(!state){const today=new Date();state={checks:{},weightLog:[],selKey:inR(today)?dKey(today):dKey(START),calM:2};}
+if(!state.weightLog)state.weightLog=[];
+if(state.calM===undefined)state.calM=2;
+let curView='today';
+function save(){try{localStorage.setItem('rudvik_fit_v4',JSON.stringify(state));}catch(e){}}
+function cntDone(key){const d=kToD(key);const tasks=getTasks(dayName(d));const c=state.checks[key]||{};return tasks.filter(t=>c[t.id]).length;}
+function isDone(key){const d=kToD(key);return cntDone(key)===getTasks(dayName(d)).length;}
+function totalXP(){let x=0;Object.keys(state.checks).forEach(k=>{const d=kToD(k);getTasks(dayName(d)).forEach(t=>{if((state.checks[k]||{})[t.id])x+=t.xp;});});return x;}
+function streak(){let s=0;let d=new Date();if(d>END)d=new Date(END);for(let i=0;i<400;i++){const k=dKey(new Date(d));if(inR(new Date(d))&&isDone(k)){s++;d.setDate(d.getDate()-1);}else break;}return s;}
+function daysComplete(){return Object.keys(state.checks).filter(k=>{const d=kToD(k);return inR(d)&&isDone(k);}).length;}
+function latestW(){return(state.weightLog&&state.weightLog.length)?state.weightLog[state.weightLog.length-1].weight:125;}
+function renderStats(){
+  const xp=totalXP();const lv=getLevel(xp);
+  const lost=Math.max(0,+(125-latestW()).toFixed(1));
+  document.getElementById('s-xp').textContent=xp;
+  document.getElementById('s-level').textContent=lv.name;
+  document.getElementById('s-days').textContent=daysComplete();
+  document.getElementById('s-streak').textContent=streak();
+  document.getElementById('s-lost').textContent=lost.toFixed(1)+' kg';
+  document.getElementById('s-rem').textContent=(35-lost).toFixed(1)+' kg to go';
+  document.getElementById('cur-pill').textContent='Now: '+(125-lost).toFixed(1)+' kg';
+  const pct=Math.min(100,(lost/35)*100);
+  document.getElementById('prog-fill').style.width=pct.toFixed(1)+'%';
+  document.getElementById('prog-pct').textContent=pct.toFixed(1)+'%';
+  document.getElementById('lv-name').textContent=lv.name;
+  if(lv.next===Infinity){document.getElementById('lv-next').textContent='MAX LEVEL!';document.getElementById('lv-fill').style.width='100%';}
+  else{document.getElementById('lv-next').textContent=(lv.next-xp)+' XP to next level';document.getElementById('lv-fill').style.width=Math.min(100,((xp-lv.min)/(lv.next-lv.min))*100).toFixed(1)+'%';}
+}
+function renderToday(){
+  const sel=kToD(state.selKey);const dn=dayName(sel);const key=state.selKey;
+  const tasks=getTasks(dn);const ch=state.checks[key]||{};
+  const todayXP=tasks.filter(t=>ch[t.id]).reduce((s,t)=>s+t.xp,0);
+  const done=tasks.filter(t=>ch[t.id]).length;
+  const dateStr=sel.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const tip=TIPS[Math.abs(sel.getDate()+sel.getMonth())%TIPS.length];
+  let h=`<div class="day-panel"><div class="day-panel-header"><div class="day-panel-title">${dateStr}</div><div class="day-xp-badge">${done}/${tasks.length} tasks · ${todayXP} XP</div></div>`;
+  if(!inR(sel)){h+=`<div style="color:var(--text3);font-size:13px;padding:1rem 0">Outside your 291-day journey (Mar 15 – Dec 31, 2026).<br>Go to Calendar tab and pick a date in range.</div>`;}
+  else{
+    [{key:'exercise',label:'Exercise & daily habits'},{key:'meals',label:'Mess meal plan'},{key:'extras',label:'Bonus habits'}].forEach(sec=>{
+      const st=tasks.filter(t=>t.sec===sec.key);
+      h+=`<div class="task-section"><div class="tsec-label">${sec.label}</div>`;
+      st.forEach(t=>{
+        const d=!!ch[t.id];
+        h+=`<div class="task-item${d?' done':''}" data-key="${key}" data-id="${t.id}" tabindex="0" role="checkbox" aria-checked="${d}">
+          <div class="chk"><svg class="chk-mark" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-5" stroke="#0a0a0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="task-body"><div class="task-name">${t.name}</div><div class="task-hint">${t.hint}</div></div>
+          <div class="task-pts">+${t.xp}</div></div>`;
+      });
+      h+=`</div>`;
+    });
+    const m=MENU[dn];
+    const avoids=[{l:'Breakfast',v:m.b.skip},{l:'Lunch',v:m.l.skip},{l:'Snack',v:m.s.skip},{l:'Dinner',v:m.d.skip}].filter(a=>a.v&&!a.v.toLowerCase().includes('nothing'));
+    if(avoids.length){h+=`<div class="avoid-box"><div class="avoid-title">Skip today</div>`;avoids.forEach(a=>{h+=`<div class="avoid-item"><span>✕</span><span>${a.l}: ${a.v}</span></div>`;});h+=`</div>`;}
+    h+=`<div class="tip-box">💡 ${tip}</div>`;
+  }
+  h+=`</div>`;
+  h+=`<div class="streak-section"><div class="streak-label">This week</div><div class="streak-row" id="wdots"></div></div>`;
+  document.getElementById('view-today').innerHTML=h;
+  document.querySelectorAll('.task-item').forEach(el=>{
+    const fn=()=>{const k=el.dataset.key,id=el.dataset.id;if(!state.checks[k])state.checks[k]={};state.checks[k][id]=!state.checks[k][id];save();renderAll();};
+    el.addEventListener('click',fn);
+    el.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();fn();}});
+  });
+  const t2=new Date();const ws=new Date(t2);ws.setDate(t2.getDate()-t2.getDay()+1);
+  let srh='';
+  for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const k=dKey(d);const lit=isDone(k)&&inR(d);const td=isToday(d);srh+=`<div class="sdot${td?' today-dot':(lit?' lit':'')}">${WK[d.getDay()].slice(0,2)}</div>`;}
+  const wd=document.getElementById('wdots');if(wd)wd.innerHTML=srh;
+}
+function renderCalendar(){
+  const m=state.calM,y=2026;
+  const fd=new Date(y,m,1).getDay();const dim=new Date(y,m+1,0).getDate();
+  let h=`<div class="cal-nav"><button class="cal-nav-btn" onclick="chM(-1)">&#8592; Prev</button><div class="cal-month-label">${MO[m]} ${y}</div><button class="cal-nav-btn" onclick="chM(1)">Next &#8594;</button></div><div class="cal-grid">`;
+  ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(d=>{h+=`<div class="cal-dow">${d}</div>`;});
+  const off=(fd===0?6:fd-1);
+  for(let i=0;i<off;i++)h+=`<div class="cal-day empty"></div>`;
+  for(let day=1;day<=dim;day++){
+    const d=new Date(y,m,day);const k=dKey(d);const ir=inR(d);
+    const comp=isDone(k);const cnt=cntDone(k);const tasks=getTasks(dayName(d));
+    const part=cnt>0&&cnt<tasks.length;const td=isToday(d);const sel=k===state.selKey;const fut=d>new Date()&&!td;
+    let cls='cal-day ';
+    if(!ir)cls+='out-of-range';else if(comp)cls+='complete';else if(part)cls+='partial';else if(fut)cls+='future';else cls+='inactive';
+    if(td)cls+=' today';if(sel)cls+=' selected';
+    h+=`<div class="${cls}" onclick="selDay('${k}')">${day}</div>`;
+  }
+  h+=`</div><div class="cal-legend">
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#0d2318;border:1px solid var(--accent)"></div>Complete</div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#1a2e1a"></div>Partial</div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--surface);border:1px solid var(--border)"></div>Future</div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="border:2px solid var(--accent2);background:var(--surface)"></div>Today</div>
+  </div><p style="font-size:12px;color:var(--text3);margin-bottom:1rem">Click any date to open that day's tasks.</p>`;
+  document.getElementById('view-calendar').innerHTML=h;
+}
+function renderHeatmap(){
+  let h=`<p style="font-size:12px;color:var(--text2);margin-bottom:12px;font-family:'JetBrains Mono',monospace">All 291 days — click any cell to open that day</p><div class="heatmap-wrap">`;
+  const months={};const cur=new Date(START);
+  while(cur<=END){
+    const mk=cur.getFullYear()+'-'+cur.getMonth();
+    if(!months[mk])months[mk]={label:MO[cur.getMonth()]+' '+cur.getFullYear(),days:[]};
+    const k=dKey(new Date(cur));const tasks=getTasks(dayName(new Date(cur)));
+    const cnt=cntDone(k);const p=cnt/tasks.length;
+    let lv=0;if(p>0&&p<=0.25)lv=1;else if(p>0.25&&p<=0.5)lv=2;else if(p>0.5&&p<1)lv=3;else if(p===1)lv=4;
+    const fut=new Date(cur)>new Date();
+    months[mk].days.push({k,lv:fut?0:lv,label:new Date(cur).toDateString()});
+    cur.setDate(cur.getDate()+1);
+  }
+  Object.values(months).forEach(m=>{
+    h+=`<div class="heatmap-month"><div class="hm-month-label">${m.label}</div><div class="hm-row">`;
+    m.days.forEach(({k,lv,label})=>{h+=`<div class="hm-cell hm-${lv}" title="${label}" onclick="selAndView('${k}')"></div>`;});
+    h+=`</div></div>`;
+  });
+  h+=`</div><div class="hm-legend"><span>Less</span><div class="hm-cell hm-0" style="width:14px;height:14px;border-radius:2px"></div><div class="hm-cell hm-1" style="width:14px;height:14px;border-radius:2px"></div><div class="hm-cell hm-2" style="width:14px;height:14px;border-radius:2px"></div><div class="hm-cell hm-3" style="width:14px;height:14px;border-radius:2px"></div><div class="hm-cell hm-4" style="width:14px;height:14px;border-radius:2px"></div><span>More</span></div>`;
+  document.getElementById('view-heatmap').innerHTML=h;
+}
+function renderWeight(){
+  const lost=Math.max(0,+(125-latestW()).toFixed(1));
+  let h=`<div class="weight-log"><div class="wl-title">Log your weight — weigh every Sunday morning before eating</div>
+    <div class="wl-input-row"><input type="number" class="wl-input" id="wl-val" placeholder="e.g. 123.5" min="60" max="130" step="0.1"/><button class="wl-btn" onclick="logW()">Log weight</button></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:'JetBrains Mono',monospace">Lost: ${lost.toFixed(1)} kg | Current: ${(125-lost).toFixed(1)} kg | Remaining: ${(35-lost).toFixed(1)} kg</div>
+    <div class="wl-entries" id="wl-list">`;
+  if(!state.weightLog||!state.weightLog.length){h+=`<div style="font-size:12px;color:var(--text3);padding:8px 0">No entries yet. Log your first weight!</div>`;}
+  else{const en=[...state.weightLog].reverse();en.forEach((e,i)=>{const prev=i<en.length-1?en[i+1].weight:125;const diff=(prev-e.weight);const sign=diff>0?'−':(diff<0?'+':'');const cls=diff>0?'wl-loss':(diff<0?'wl-gain':'');h+=`<div class="wl-entry"><span>${e.date}</span><span>${e.weight} kg</span><span class="${cls}">${diff!==0?sign+Math.abs(diff).toFixed(1)+' kg':'—'}</span></div>`;});}
+  h+=`</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:1.5rem"><div style="font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Weight chart</div><canvas id="w-chart" height="150"></canvas><div style="font-size:11px;color:var(--text3);margin-top:8px;font-family:'JetBrains Mono',monospace">Cyan line = 90 kg goal</div></div>`;
+  document.getElementById('view-weight').innerHTML=h;
+  if(state.weightLog&&state.weightLog.length>=2){
+    setTimeout(()=>{
+      const canvas=document.getElementById('w-chart');if(!canvas)return;
+      const ctx=canvas.getContext('2d');const W=canvas.parentElement.offsetWidth-28;canvas.width=W;canvas.height=150;
+      const en=state.weightLog;const ws2=en.map(e=>e.weight);
+      const minW=Math.min(...ws2,90)-3;const maxW=Math.max(...ws2,125)+3;const H=150;
+      ctx.fillStyle='#13131a';ctx.fillRect(0,0,W,H);
+      ctx.strokeStyle='#2a2a3a';ctx.lineWidth=0.5;
+      for(let i=0;i<=4;i++){const y=H*(i/4);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+      const gy=H-((90-minW)/(maxW-minW))*H;
+      ctx.beginPath();ctx.strokeStyle='#22d3ee';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#22d3ee';ctx.font='10px monospace';ctx.fillText('90 kg',4,gy-4);
+      ctx.beginPath();ctx.strokeStyle='#4ade80';ctx.lineWidth=2;
+      en.forEach((e,i)=>{const x=(i/(en.length-1))*W;const y=H-((e.weight-minW)/(maxW-minW))*H;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
+      ctx.fillStyle='#4ade80';en.forEach((e,i)=>{const x=(i/(en.length-1))*W;const y=H-((e.weight-minW)/(maxW-minW))*H;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();});
+    },50);
+  }
+}
+window.logW=function(){
+  const inp=document.getElementById('wl-val');const val=parseFloat(inp.value);
+  if(isNaN(val)||val<60||val>130){alert('Enter valid weight: 60–130 kg');return;}
+  state.weightLog.push({date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),weight:val});
+  inp.value='';save();renderAll();
+};
+window.chM=function(d){let m=state.calM+d;if(m<0)m=0;if(m>11)m=11;state.calM=m;save();renderCalendar();};
+window.selDay=function(k){state.selKey=k;save();setView('today');};
+window.selAndView=function(k){state.selKey=k;save();setView('today');};
+window.setView=function(v){
+  curView=v;
+  ['today','calendar','heatmap','weight'].forEach(n=>{document.getElementById('view-'+n).style.display=n===v?'block':'none';});
+  document.querySelectorAll('.vtab').forEach(t=>{const map={'today':'today','calendar':'calendar','heatmap':'heatmap','weight log':'weight'};t.classList.toggle('active',map[t.textContent.toLowerCase().trim()]===v);});
+  renderAll();
+};
+function renderAll(){renderStats();if(curView==='today')renderToday();else if(curView==='calendar')renderCalendar();else if(curView==='heatmap')renderHeatmap();else if(curView==='weight')renderWeight();}
+renderAll();
+</script>
+</body>
+</html>
